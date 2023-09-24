@@ -13,4 +13,5 @@
     <string name="name">name</string>
     <string name="age">age</string>
     <string name="frequently_asked_questions">Frequently Asked Questions</string>
+    <string name="loading">loading</string>
 </resources>

@@ -22,4 +22,14 @@
     <style name="Theme.Consultant.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Consultant.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+        <!-- Dark Mode Theme -->
+        <style name="AppTheme.Dark" parent="Theme.AppCompat.DayNight">
+            <!-- Customize dark mode attributes -->
+            <!-- For example, you can set background color -->
+            <item name="android:windowBackground">@color/dark_background_color</item>
+        </style>
+
+
 </resources>

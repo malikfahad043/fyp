@@ -10,32 +10,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".profile">
-
         <TextView
+            android:id="@+id/mypro"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My Profile"
+            android:text="Create Profile"
             android:textColor="@color/white"
             android:textSize="25dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
-            android:textStyle="bold"
-            />
-
-        <ImageView
+            android:textStyle="bold"/>
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileImage"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@drawable/house"
+            android:layout_below="@id/mypro"
             android:layout_centerHorizontal="true"
-            android:scaleType="centerCrop"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@color/white"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/chooseImageBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="290dp"
             android:paddingHorizontal="10dp"
             android:layout_centerHorizontal="true"
             android:textColor="@color/black"
@@ -49,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="350dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/edittext"
@@ -70,7 +69,7 @@
             android:drawableStart="@drawable/baseline_email_24"
             android:drawablePadding="12dp"
             android:background="@drawable/edittext"
-            android:layout_marginTop="270dp"
+            android:layout_marginTop="410dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:hint="Enter Your Email"
@@ -84,7 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="340dp"
+            android:layout_marginTop="470dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/edittext"
@@ -104,7 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="410dp"
+            android:layout_marginTop="530dp"
             android:layout_marginEnd="16dp"
             android:padding="10dp"
             android:layout_marginBottom="16dp"
@@ -116,6 +115,41 @@
             android:textStyle="bold"
             android:textColor="@color/white"
             android:textColorHint="@color/white" />
+        <EditText
+            android:id="@+id/user_cnic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="590dp"
+            android:layout_marginEnd="16dp"
+            android:padding="10dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/edittext"
+            android:drawablePadding="12dp"
+            android:hint="CNIC"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
+        <EditText
+            android:id="@+id/dob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="650dp"
+            android:layout_marginEnd="16dp"
+            android:padding="10dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/edittext"
+            android:drawablePadding="12dp"
+            android:hint="Date Of Birth"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
+
 
 
 
@@ -125,7 +159,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="550dp"
+            android:layout_marginTop="700dp"
             android:orientation="horizontal">
 
             <RadioButton
@@ -155,7 +189,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="660dp"
+            android:layout_marginTop="850dp"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:background="@drawable/button"
@@ -166,18 +200,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="300dp"
-            android:layout_marginTop="660dp"
+            android:layout_marginTop="850dp"
+            android:background="@drawable/button"
+            android:text="Update"
             android:textColor="@color/black"
             android:textStyle="bold"
-            android:background="@drawable/button"
-            android:text="Update" />
+            tools:ignore="TextSizeCheck" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="660dp"
+            android:layout_marginTop="850dp"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:background="@drawable/button"

@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +35,9 @@ import java.util.Map;
 
 public class profile extends AppCompatActivity
 {
-    private EditText phoneno,emailaddress;
+    private EditText phoneno, emailaddress;
+    private EditText user_cnic;
+    private EditText dob;
     private EditText editName;
     private EditText age;
     private ImageView profileImage;
@@ -44,29 +48,54 @@ public class profile extends AppCompatActivity
     private RadioGroup radioGroup;
     private FirebaseFirestore firestore;
     private StorageReference storageReference;
-
     private static final int PICK_IMAGE_REQUEST = 1;
+
+//TO SELECT THE IMAGE FROM THE PHONE
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+            profileImage.setImageURI(imageUri);
+            profileImage.setVisibility(View.VISIBLE); // Make the header visible
+
+            // Save the image URI to SharedPreferences
+            SharedPreferences sharedPreferences = getSharedPreferences("UserProfile", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("ImageUri", imageUri.toString());
+            editor.apply();
+        }
+    }
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
         firestore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
-
         phoneno = findViewById(R.id.phoneno);
         emailaddress = findViewById(R.id.emailaddress);
         editName = findViewById(R.id.editName);
         age = findViewById(R.id.age);
+        user_cnic=findViewById(R.id.user_cnic);
+        dob=findViewById(R.id.dob);
         profileImage = findViewById(R.id.profileImage);
         chooseImageBtn = findViewById(R.id.chooseImageBtn);
         buttonSave = findViewById(R.id.buttonSave);
         buttonUpdate = findViewById(R.id.buttonUpdate);
         buttonDelete = findViewById(R.id.buttonDelete);
         radioGroup = findViewById(R.id.radio_group_gender);
-
+        //        CHOOSE IMAGE
+        chooseImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent, PICK_IMAGE_REQUEST);
+            }
+        });
 //        RADIO BUTTONS
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -78,22 +107,16 @@ public class profile extends AppCompatActivity
                 }
             }
         });
-        Intent intent = new Intent(profile.this, consultant .class);
-        intent.putExtra("key", "Hello, ActivityB!"); // Add data to the intent using key-value pairs
-        startActivity(intent);
-
-//        chooseImageBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                openFileChooser();
-//            }
-//        });
-
-        //Button
-        buttonSave.setOnClickListener(view -> {
-            saveToFirestore();
+        //SAVE BUTTON TO FIRESTORE
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Save data to Firestore
+                saveToFirestore();
+                // Save data to SharedPreferences
+                saveUserDetails();
+            }
         });
-
         // Set a click listener on the update button
         buttonUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,42 +135,44 @@ public class profile extends AppCompatActivity
             }
         });
     }
-
-//    private void openFileChooser() {
-//        Intent intent = new Intent();
-//        intent.setType("image/*");
-//        intent.setAction(Intent.ACTION_GET_CONTENT);
-//        startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE_REQUEST);
-//    }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-//            Uri imageUri = data.getData();
-//            profileImage.setImageURI(imageUri);
-//        }
-//    }
-
+//NEW CODE
+private void saveUserDetails() {
+    String firstName = editName.getText().toString().trim();
+    String phoneNumber = phoneno.getText().toString().trim();
+    String email = emailaddress.getText().toString().trim();
+    String userAge = age.getText().toString().trim();
+    String usercnic = user_cnic.getText().toString().trim();
+    String userdob = dob.getText().toString().trim();
+    // Save user details using SharedPreferences
+    SharedPreferences sharedPreferences = getSharedPreferences("UserProfile", MODE_PRIVATE);
+    SharedPreferences.Editor editor = sharedPreferences.edit();
+    editor.putString("Name", firstName);
+    editor.putString("PhoneNumber", phoneNumber);
+    editor.putString("Email", email);
+    editor.putString("Age", userAge);
+    editor.putString("Cnic", usercnic);
+    editor.putString("Dob", userdob);
+    editor.apply();
+}
     private void saveToFirestore() {
         // Get the entered data
         String productName = editName.getText().toString().trim();
+
         String productEmail = emailaddress.getText().toString().trim();
         String productNo = phoneno.getText().toString().trim();
         String productAge = age.getText().toString().trim();
+        String productcnic = user_cnic.getText().toString().trim();
+        String productdob = dob.getText().toString().trim();
         double productPrice = Double.parseDouble(age.getText().toString().trim());
-
         // Create a new product object
         Map<String, Object> product = new HashMap<>();
         product.put("Name", productName);
         product.put("Email", productEmail);
         product.put("Phone Number", productNo);
         product.put("age", productAge);
-
-
+        product.put("cnic", productcnic);
+        product.put("dob", productdob);
 //        product.put("image",profileImage);
-
         // Add the product to Firestore
         firestore.collection("products")
                 .document(productNo)
@@ -156,11 +181,13 @@ public class profile extends AppCompatActivity
                     @Override
                     public void onSuccess(Void aVoid) {
                         // Data added successfully
-                        Intent intent = new Intent(profile.this, consultant.class);
+                        Intent intent = new Intent(profile.this, userinfo.class);
                         intent.putExtra("Name", productName);
                         intent.putExtra("Email", productEmail);
                         intent.putExtra("Phone Number", productNo);
                         intent.putExtra("age", productAge);
+                        intent.putExtra("cnic", productcnic);
+                        intent.putExtra("dob", productdob);
                         startActivity(intent);
                         Toast.makeText(profile.this, "Product saved to Firestore", Toast.LENGTH_SHORT).show();
                     }
@@ -172,22 +199,8 @@ public class profile extends AppCompatActivity
                     }
                 });
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Save profile data to the database
-    private void saveProfileDataToDatabase(String editName, String emailaddress, int phoneno, int age) {
+    private void saveProfileDataToDatabase(String editName, String emailaddress, int phoneno, int age, int cnic, int dob) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference consultantsRef = database.getReference("consultants");
 
@@ -199,6 +212,8 @@ public class profile extends AppCompatActivity
         newConsultantRef.child("emailaddress").setValue(emailaddress);
         newConsultantRef.child("phoneno").setValue(phoneno);
         newConsultantRef.child("age").setValue(age);
+        newConsultantRef.child("cnic").setValue(cnic);
+        newConsultantRef.child("dob").setValue(dob);
     }
 
     // Retrieve consultant data from the database and update UI
@@ -231,70 +246,6 @@ public class profile extends AppCompatActivity
             }
         });
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //      THIS IS THE SEPERATE CODE DONT TOUCH THIS!!!!!!!!!!
     private void updateInFirestore() {
         // Get the entered data
